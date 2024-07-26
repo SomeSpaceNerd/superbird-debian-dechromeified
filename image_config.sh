@@ -29,3 +29,6 @@ EXTRA_PACKAGES=""
 # timezone and locale
 TIMEZONE="America/Los_Angeles"
 LOCALE="en_US.UTF-8"
+
+# directory for FTP server
+FTP_DIR="/ftp/"

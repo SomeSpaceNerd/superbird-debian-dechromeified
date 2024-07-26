@@ -103,11 +103,12 @@ iptables -A POSTROUTING -t nat -j MASQUERADE -s "${USBNET_PREFIX}.0/24"
 # port forwards:
 #   2022: ssh on superbird
 #   5900: vnc on superbird
-#   9222: chromium remote debugging on superbird
+#   20 and 21: FTP
 
 forward_port 2022 22
 forward_port 5900
-forward_port 9222
+forward_port 20
+forward_port 21
 
 # persist rules to file
 iptables-save > /etc/iptables/rules.v4
@@ -125,6 +126,10 @@ EOF
 
 # add superbird to /etc/hosts
 append_if_missing "${USBNET_PREFIX}.2  ${HOST_NAME}"  "/etc/hosts"
+
+# make ftp directories
+mkdir "${FTP_DIR}"
+mkdir "${FTP_DIR}/programs"
 
 echo "Need to reboot for all changes to take effect"
 
