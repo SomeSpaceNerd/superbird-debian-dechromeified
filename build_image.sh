@@ -266,9 +266,16 @@ install_service vnc.service
 install_script setup_backlight.sh
 install_service backlight.service
 
-install_script run_on_start.sh
+install_script ftp_settings.py
+install_script ftp.py
+install_script setup_ftp.sh
+install_service ftp.service
+
 install_script ROS_settings.sh
+install_script run_on_start.sh
 install_service run_on_start.service
+
+adb push files/data/scripts/app/. /scripts/app
 
 in_target chown -R "$USER_NAME" /scripts
 

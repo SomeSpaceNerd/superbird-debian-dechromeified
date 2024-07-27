@@ -1,9 +1,9 @@
 [Unit]
-Description=Button service to integrate with Home Assistant
+Description=FTP client to receive files from host
 Wants=network-online.target
 
 [Service]
-ExecStart=/scripts/start_buttons.sh
+ExecStart=/scripts/setup_ftp.sh
 RestartSec=5
 
 [Install]
