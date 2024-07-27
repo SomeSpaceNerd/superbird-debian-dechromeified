@@ -263,17 +263,12 @@ install_script vnc_passwd
 install_script setup_vnc.sh
 install_service vnc.service
 
-install_script start_buttons.sh
-install_script buttons_app.py
-install_script buttons_settings.py
-install_service buttons.service
-
 install_script setup_backlight.sh
 install_service backlight.service
 
-install_script start_chromium.sh
-install_script chromium_settings.sh
-install_service chromium.service
+install_script run_on_start.sh
+install_script ROS_settings.sh
+install_service run_on_start.service
 
 in_target chown -R "$USER_NAME" /scripts
 
