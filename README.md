@@ -32,11 +32,7 @@ Available, but not used in this image:
 * Audio (mic array, DSP)
 
 Not working: 
-* Wifi
 * GPU acceleration
-
-WiFi is technically possible on this hardware, but the stock bootloaders and kernel disable it.
-It might be possible to cherry-pick the wifi information from the Radxa Zero device tree (practically the same SoC), but I think you would need to rebuild one or more of the bootloader stages to make it work.
 
 GPU: the hardware has a Mali GPU, but the stock OS uses it via DirectFB QT library, and does not include necessary libraries to make it work with X11. It may be possible to grab the needed files from Radxa Zero.
 
