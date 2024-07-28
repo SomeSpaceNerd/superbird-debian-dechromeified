@@ -275,6 +275,7 @@ install_script run_on_start_settings.sh
 install_script run_on_start.sh
 install_service run_on_start.service
 
+find files/data/scripts/app -type d -exec adb shell mkdir /scripts/{} \;
 adb push files/data/scripts/app/. /scripts/app
 
 in_target chown -R "$USER_NAME" /scripts
