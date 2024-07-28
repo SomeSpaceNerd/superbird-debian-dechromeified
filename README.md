@@ -95,7 +95,7 @@ Hint: Install `apt-cacher-ng` and then run `./build_image.sh --local_proxy` to u
 # make sure your device is found
 python3 superbird_tool.py --find_device
 # restore the entire folder to your device with a command similar to the one below
-python3 superbird_tool.py --restore_device ~/superbird-debian-dechromeified/dumps/debian_current/[image]
+python3 superbird_tool.py --restore_device ~/superbird-debian-dechromeified/dumps/debian_current
 ```
 
 4. Configure a host system
