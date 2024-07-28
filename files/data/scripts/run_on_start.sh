@@ -2,7 +2,7 @@
 # Start X with just a single fullscreen program
 #	fullscreen, kiosk mode, tweaked for touchscreen, with given url
 
-source /scripts/chromium_settings.sh
+source /scripts/run_on_start_settings.sh
 
 ## Hardcoded Vars you dont need to mess with
 USER_DATA_DIR="/config"
@@ -35,10 +35,10 @@ echo "Briefly starting X11 in order to detect configured resolution"
 DISP_REZ=$(xinit /usr/bin/xrandr 2>/dev/null|grep "\*"|awk '{print $1}'|tr 'x' ',')
 echo "Detected resolution: $DISP_REZ"
 
-PROGRAM_CMD="xinit $PROGRAM_BINARY \ --$EXTRA_XORG_ARGS \ --$EXTRA_PROGRAM}_ARGS"
+PROGRAM_CMD="xinit $PROGRAM_BINARY \ --$EXTRA_XORG_ARGS \ --$EXTRA_PROGRAM_ARGS"
 
 echo ""
-echo "running chromium command: $PROGRAM_CMD"
+echo "running kiosk command: $PROGRAM_CMD"
 echo ""
 $PROGRAM_CMD
 

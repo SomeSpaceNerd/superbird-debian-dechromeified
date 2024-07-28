@@ -271,7 +271,7 @@ install_script ftp.py
 install_script setup_ftp.sh
 install_service ftp.service
 
-install_script ROS_settings.sh
+install_script run_on_start_settings.sh
 install_script run_on_start.sh
 install_service run_on_start.service
 
