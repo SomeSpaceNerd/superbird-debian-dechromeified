@@ -28,10 +28,10 @@ PACKAGES="$PACKAGES xserver-xorg-input-evdev libinput-bin xserver-xorg-input-lib
 # additional required tools
 PACKAGES="$PACKAGES fbset tigervnc-scraping-server"
 
-# NOTE: we cannot install chromium at at the debootstrap stage
-#   so we install chromium and other packages in a separate stage using chroot
+# NOTE: we cannot install packages at at the debootstrap stage
+#   so we install all packages in a separate stage using chroot
 
-STAGE2_PACKAGES="chromium python3-minimal python3-pip $EXTRA_PACKAGES"
+STAGE2_PACKAGES="python3-minimal python3-pip $EXTRA_PACKAGES"
 
 
 ################################################ Running Variables ################################################
