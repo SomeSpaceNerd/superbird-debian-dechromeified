@@ -65,6 +65,15 @@ install_script() {
 	in_target chown "$USER_NAME" "/scripts/$SCR_NAME"
 }
 
+install_dir() {
+	# copy the named directory into target /scripts/ and make it executable, owned by superbird
+	DIR_NAME="$1"
+	echo "Installing directory: $DIR_NAME"
+	cp "${FILES_DATA}/scripts/$DIR_NAME/" "${INSTALL_PATH}/scripts/$DIR_NAME/"
+	chmod +x "${INSTALL_PATH}/scripts/$DIR_NAME/"
+	in_target chown "$USER_NAME" "/scripts/$DIR_NAME/"
+}
+
 install_service() {
 	# copy named service file into taret /lib/systemd/system/, symlink it into multi-user.target.wants, and make it owned by superbird
 	SVC_NAME="$1"
@@ -275,8 +284,7 @@ install_script run_on_start_settings.sh
 install_script run_on_start.sh
 install_service run_on_start.service
 
-find files/data/scripts/app -type d -exec adb shell mkdir /scripts/{} \;
-adb push files/data/scripts/app/. /scripts/app
+install_dir app
 
 in_target chown -R "$USER_NAME" /scripts
 
