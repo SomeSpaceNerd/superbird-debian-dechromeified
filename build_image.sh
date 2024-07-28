@@ -69,7 +69,7 @@ install_dir() {
 	# copy the named directory into target /scripts/ and make it executable, owned by superbird
 	DIR_NAME="$1"
 	echo "Installing directory: $DIR_NAME"
-	cp "${FILES_DATA}/scripts/$DIR_NAME/" "${INSTALL_PATH}/scripts/$DIR_NAME/"
+	cp -r "${FILES_DATA}/scripts/$DIR_NAME/" "${INSTALL_PATH}/scripts/$DIR_NAME/"
 	chmod +x "${INSTALL_PATH}/scripts/$DIR_NAME/"
 	in_target chown "$USER_NAME" "/scripts/$DIR_NAME/"
 }
