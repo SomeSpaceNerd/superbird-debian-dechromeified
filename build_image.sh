@@ -167,6 +167,7 @@ echo ""
 debootstrap --verbose --variant="$DISTRO_VARIANT" --no-check-gpg --include="$CSV_PACKAGES" --arch="$ARCHITECTURE" "$DISTRO_BRANCH" "$INSTALL_PATH" "$DISTRO_REPO_URL"
 
 in_target apt update
+in_target apt-get install linux-headers-generic # Only really needed for evdev
 in_target apt install -y --no-install-recommends --no-install-suggests $STAGE2_PACKAGES
 
 mkdir -p "${INSTALL_PATH}/scripts"

@@ -24,7 +24,7 @@ DISTRO_VARIANT="minbase"
 
 # you can add extra packages here to install during stage 2
 #   will be installed like this (in chroot): apt install -y --no-install-recommends --no-install-suggests $EXTRA_PACKAGES
-EXTRA_PACKAGES="libxfce4ui-utils thunar xfce4-appfinder xfce4-panel xfce4-session xfce4-settings xfce4-terminal xfconf xfdesktop4 xfwm4 shared-mime-info"
+EXTRA_PACKAGES=""
 
 # timezone and locale
 TIMEZONE="America/Los_Angeles"

@@ -1,4 +1,4 @@
 # Pip requirements
-pyside6>=6.7.2 
-PyOpenGL>=3.1.7 
-PyOpenGL_accelerate>=3.1.7 
+PySide6-Essentials>=6.7.2
+PyOpenGL>=3.1.7
+evdev>=1.7.1
