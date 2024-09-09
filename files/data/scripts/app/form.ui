@@ -130,7 +130,7 @@
      <string>Knob</string>
     </property>
    </widget>
-   <widget class="QLabel" name="KnobDisplay">
+   <widget class="QLabel" name="Knob">
     <property name="geometry">
      <rect>
       <x>580</x>

@@ -1,7 +1,9 @@
 # This Python file uses the following encoding: utf-8
 import sys
-from PySide6.QtWidgets import QApplication, QMainWindow
-from PySide6.QtCore import QTimer
+import os
+import struct
+from PySide6.QtWidgets import QApplication, QMainWindow, QLabel
+from PySide6.QtCore import QTimer, QThread, Signal
 from PySide6.QtOpenGLWidgets import QOpenGLWidget
 from OpenGL.GL import *
 from OpenGL.GLU import *
@@ -9,8 +11,29 @@ from OpenGL.GLU import *
 # Import the generated UI class
 from ui_form import Ui_MainWindow
 
+# Device paths
+DEV_BUTTONS = '/dev/input/event0'
+DEV_KNOB = '/dev/input/event1'
 
-# Subclassing OpenGL_Demo to implement the OpenGL rendering
+# Button code map
+BUTTONS_CODE_MAP = {
+    2: 'Button1',
+    3: 'Button2',
+    4: 'Button3',
+    5: 'Button4',
+    50: 'MenuButton',
+    28: 'Button5',
+}
+
+# Knob direction codes
+KNOB_LEFT = 4294967295  # actually -1 but unsigned int so wraps around
+KNOB_RIGHT = 1
+
+# Input event format: timeval (2x long), type (unsigned short), code (unsigned short), value (int)
+EVENT_FORMAT = 'llHHI'
+EVENT_SIZE = struct.calcsize(EVENT_FORMAT)
+
+# Subclassing OpenGLDemo to implement the OpenGL rendering
 class OpenGLDemo(QOpenGLWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -100,6 +123,48 @@ class OpenGLDemo(QOpenGLWidget):
         self.angle_z %= 360
         self.update()
 
+# Thread to handle button events
+class ButtonEventThread(QThread):
+    button_pressed = Signal(int, bool)  # Signal to emit when a button is pressed (code, is_pressed)
+
+    def __init__(self):
+        super().__init__()
+        self.device_file = None
+
+    def run(self):
+        self.device_file = os.open(DEV_BUTTONS, os.O_RDONLY | os.O_NONBLOCK)
+        try:
+            while True:
+                event = os.read(self.device_file, EVENT_SIZE)
+                if len(event) == EVENT_SIZE:
+                    _, _, event_type, code, value = struct.unpack(EVENT_FORMAT, event)
+                    if event_type == 1:  # EV_KEY type
+                        is_pressed = value == 1  # Key press event
+                        self.button_pressed.emit(code, is_pressed)
+        finally:
+            if self.device_file:
+                os.close(self.device_file)
+
+# Worker thread to handle knob events
+class KnobEventThread(QThread):
+    knob_turned = Signal(int)  # Signal to emit when the knob is turned (value)
+
+    def __init__(self):
+        super().__init__()
+        self.device_file = None
+
+    def run(self):
+        self.device_file = os.open(DEV_KNOB, os.O_RDONLY | os.O_NONBLOCK)
+        try:
+            while True:
+                event = os.read(self.device_file, EVENT_SIZE)
+                if len(event) == EVENT_SIZE:
+                    _, _, event_type, code, value = struct.unpack(EVENT_FORMAT, event)
+                    if event_type == 2 and code == 7:  # EV_REL type and REL_DIAL code
+                        self.knob_turned.emit(value)
+        finally:
+            if self.device_file:
+                os.close(self.device_file)
 
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
@@ -107,15 +172,47 @@ class MainWindow(QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-        # Replace OpenGL_Demo with the OpenGLDemo widget
         self.opengl_widget = OpenGLDemo(self.ui.OpenGL_Demo)
         self.opengl_widget.setGeometry(self.ui.OpenGL_Demo.geometry())
         self.ui.OpenGL_Demo.setParent(None)
         self.opengl_widget.setParent(self)
 
+        self.button_thread = ButtonEventThread()
+        self.button_thread.button_pressed.connect(self.update_button_label)
+        self.button_thread.start()
+
+        self.knob_thread = KnobEventThread()
+        self.knob_thread.knob_turned.connect(self.update_knob_label)
+        self.knob_thread.start()
+
+        self.setup_ui()
+
+    def setup_ui(self):
+        self.button_labels = {
+            'Button1': self.findChild(QLabel, "button1"),
+            'Button2': self.findChild(QLabel, "button2"),
+            'Button3': self.findChild(QLabel, "button3"),
+            'Button4': self.findChild(QLabel, "button4"),
+            'Button5': self.findChild(QLabel, "button5"),
+            'MenuButton': self.findChild(QLabel, "MenuButton"),
+        }
+        self.knob_label = self.findChild(QLabel, "Knob")
+
+    def update_button_label(self, code, is_pressed):
+        button_name = BUTTONS_CODE_MAP.get(code)
+        if button_name and button_name in self.button_labels:
+            self.button_labels[button_name].setStyleSheet("background-color: lightgreen;" if is_pressed else "")
+
+    def update_knob_label(self, value):
+        if value == KNOB_LEFT:
+            self.knob_label.setText("LEFT")
+        elif value == KNOB_RIGHT:
+            self.knob_label.setText("RIGHT")
+        else:
+            self.knob_label.setText(str(value))
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    widget = MainWindow()
-    widget.show()
+    window = MainWindow()
+    window.show()
     sys.exit(app.exec())
